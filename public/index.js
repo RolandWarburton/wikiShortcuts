@@ -36,7 +36,9 @@ class IntroAnimation {
 				opacity: 1,
 				oncomplete: () => {
 					this.animationEmitter.dispatchAnimationState(
-						new CustomEvent("animation", { detail: { state: `${this.target.id}` } })
+						new CustomEvent("animation", {
+							detail: { state: `${this.target.id}`, target: this.target },
+						})
 					);
 				},
 			},
@@ -51,6 +53,44 @@ class IntroAnimation {
 
 	play() {
 		this.introTimeline.paused(false);
+	}
+}
+
+class SelectAnimation {
+	constructor(target) {
+		this.target = target;
+		this.clicked = false;
+		this.hasRun = false;
+		this.timeline = this.generateTimeline(target);
+		this.registerHandlers(target);
+	}
+
+	generateTimeline(target) {
+		const animationTargets = {
+			from: {
+				ease: "circ.out",
+				duration: 1,
+			},
+			to: {
+				css: { scale: 1.5 },
+			},
+		};
+		return gsap.timeline().to(target, animationTargets.to).paused(true);
+	}
+
+	registerHandlers(target) {
+		target.addEventListener("click", (e) => {
+			this.clicked = !this.clicked;
+			if (this.clicked) {
+				e.target.src = "/kite2.png";
+				// unpause if it hasn't run before, else play the animation
+				!this.hasRun ? this.timeline.paused(false) : this.timeline.play();
+			} else {
+				e.target.src = "/kite.png";
+				this.timeline.reverse();
+			}
+			this.hasRun = true;
+		});
 	}
 }
 
@@ -133,7 +173,7 @@ class PatternManager {
 
 const main = async () => {
 	const animationEmitter = new AnimationEmitter();
-	const images = document.querySelectorAll(".image_wrapper");
+	const images = document.querySelectorAll(".kite");
 	const outros = [];
 	for (let i = 0; i < images.length; i++) {
 		const target = images[i];
@@ -161,7 +201,7 @@ const main = async () => {
 
 	// an example of the animation emitter doing something every time a kite finishes animating
 	animationEmitter.addEventListener("animation", (e) => {
-		console.log(e.detail);
+		const interactive = new SelectAnimation(e.detail.target);
 	});
 };
 

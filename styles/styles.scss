@@ -46,7 +46,16 @@ html, body {
 	align-items: center;
 }
 
-.image_wrapper {
+.image {
+	position: relative;
+}
+
+.kite {
+	position: absolute;
+	left: 0;
+}
+
+.kite, .halo {
 	// provide an upper limit to prevent images from getting huge
 	max-width: 150px;
 
