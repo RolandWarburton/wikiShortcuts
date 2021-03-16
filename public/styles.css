@@ -1,0 +1,40 @@
+* {
+  margin: 0;
+  padding: 0; }
+
+html, body {
+  height: 100%;
+  background-color: #699be6; }
+
+#app {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%; }
+
+@media (max-width: 1024px) {
+  .grid {
+    max-width: 100%; } }
+
+@media (min-width: 1024px) {
+  .grid {
+    max-width: 50%; } }
+
+.col {
+  grid-template-columns: 1fr 1fr 1fr; }
+
+.row {
+  display: grid;
+  margin: 10% 0;
+  width: 100%;
+  justify-items: center;
+  align-items: center; }
+
+.image_wrapper {
+  max-width: 150px; }
+  @media (max-width: 1024px) {
+    .image_wrapper {
+      max-width: 80%; } }
+  @media (min-width: 1024px) {
+    .image_wrapper {
+      max-width: 60%; } }

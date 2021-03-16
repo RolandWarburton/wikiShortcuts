@@ -1,0 +1,61 @@
+@import "reset";
+@import "include-media";
+
+html, body {
+	height: 100%;
+	background-color: #699be6;
+	// background-image: url("/background.jpg");
+}
+
+
+// Wraps the entire application
+#app {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+}
+
+
+.grid {
+	// max-width: 100%;
+
+	// phones
+	@include media("<=desktop") {
+		max-width: 100%;
+		// background: red;
+	}
+	// desktop
+	@include media(">=desktop") {
+		max-width: 50%;
+		// background: blue;
+	}
+}
+
+.col {
+	grid-template-columns: 1fr 1fr 1fr;
+}
+
+// There is typically 2 rows
+// Each row should have an ID/Class that defines the number of columns within it
+.row {
+	display: grid;
+	margin: 10% 0;
+	width: 100%;
+	justify-items: center;
+	align-items: center;
+}
+
+.image_wrapper {
+	// provide an upper limit to prevent images from getting huge
+	max-width: 150px;
+
+	// phones
+	@include media("<=desktop") {
+		max-width: 80%; // this is a max width but in most situations it will always be this value
+	}
+	// desktop
+	@include media(">=desktop") {
+		max-width:60%; // this is a max width but in most situations it will always be this value
+	}
+}
