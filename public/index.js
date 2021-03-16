@@ -2,16 +2,6 @@ const genFloat = (min, max) => Math.random() * (max - min) + min;
 
 const wait = (ms) => new Promise((res) => setTimeout(res, ms));
 
-// Decided i didn't like this
-const bounceEffect = (images, target) => {
-	const dur = 1.25;
-	const bounceEffect = new TimelineMax();
-	bounceEffect
-		.to(target, { y: "-=20", ease: Sine.easeInOut, duration: dur })
-		.to(target, { y: "+=40", ease: Sine.easeInOut, duration: dur })
-		.to(target, { y: "-=20", ease: Sine.easeInOut, duration: dur });
-};
-
 class AnimationEmitter extends EventTarget {
 	constructor(initialState) {
 		super();
