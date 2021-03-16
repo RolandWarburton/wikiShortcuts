@@ -59,52 +59,6 @@ class IntroAnimation {
 			.paused(true);
 	}
 
-	// ! DEPRECATED
-	// when mousing over bounce the target up
-	generateHoverTimeline(target) {
-		const animationTargets = {
-			to: {
-				y: "-=25",
-				duration: 0.3,
-				ease: "power4.out",
-			},
-		};
-		const hoverEffect = gsap.to(target, animationTargets.to).paused(true);
-
-		target.addEventListener("mousemove", (e) => {
-			// animation is a bit janky when the intro timeline hasn't finished
-			// this just checks that its mostly completed to avoid any weird tween stuff
-			// for more info read the mouseleave comments which is also required to fix this bug
-			if (this.introTimeline.progress() > 0.8 && !this.paused) {
-				hoverEffect.play();
-				this.paused = false;
-				e.target.src = "/kite2.png";
-			}
-		});
-
-		target.addEventListener("click", () => {
-			// pause the animation. Else unpause (reverse) it
-			if (this.paused == false) {
-				hoverEffect.paused(true);
-				this.paused = true;
-			} else {
-				hoverEffect.reverse();
-				this.paused = false;
-			}
-		});
-
-		target.addEventListener("mouseleave", (e) => {
-			// animation is a bit janky when the intro timeline hasn't finished
-			// a bug happens when you mouseenter and mouseleave the animating element while its completing its introTimeline
-			// this is because the mousemove hasn't has a change to hover the element up, and now the reverse() function moves it down (so its out of place)
-			// this just checks that the introTimeline has finished before reversing the animation which should stop the image being left in a weird position
-			if (this.paused == false && this.introTimeline.progress() == 1) {
-				hoverEffect.reverse();
-				e.target.src = "/kite.png";
-			}
-		});
-	}
-
 	play() {
 		this.introTimeline.paused(false);
 	}
