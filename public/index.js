@@ -4,11 +4,7 @@ const wait = (ms) => new Promise((res) => setTimeout(res, ms));
 
 // Decided i didn't like this
 const bounceEffect = (images, target) => {
-	// const dur = genFloat(2, 2.5);
 	const dur = 1.25;
-	// const dur = genFloat(0.1, 0.5);
-	const audio = new Audio("gong.wav");
-	// const bounceEffect = new TimelineMax({ repeat: -1 });
 	const bounceEffect = new TimelineMax();
 	bounceEffect
 		.to(target, { y: "-=20", ease: Sine.easeInOut, duration: dur })
@@ -16,11 +12,24 @@ const bounceEffect = (images, target) => {
 		.to(target, { y: "-=20", ease: Sine.easeInOut, duration: dur });
 };
 
+class AnimationEmitter extends EventTarget {
+	constructor(initialState) {
+		super();
+		this.animationState = initialState;
+	}
+
+	dispatchAnimationState(event) {
+		this.dispatchEvent(event);
+	}
+}
+
 class IntroAnimation {
-	constructor(target) {
+	constructor(target, animationEmitter) {
+		this.target = target;
 		this.introTimeline = this.generateIntroTimeline(target);
-		this.hoverTimeline = this.generateHoverTimeline(target);
+		// this.hoverTimeline = this.generateHoverTimeline(target);
 		this.paused = false;
+		this.animationEmitter = animationEmitter;
 	}
 
 	generateIntroTimeline(target) {
@@ -36,7 +45,9 @@ class IntroAnimation {
 			to: {
 				opacity: 1,
 				oncomplete: () => {
-					console.log("done");
+					this.animationEmitter.dispatchAnimationState(
+						new CustomEvent("animation", { detail: { state: `${this.target.id}` } })
+					);
 				},
 			},
 		};
@@ -48,6 +59,7 @@ class IntroAnimation {
 			.paused(true);
 	}
 
+	// ! DEPRECATED
 	// when mousing over bounce the target up
 	generateHoverTimeline(target) {
 		const animationTargets = {
@@ -176,20 +188,25 @@ class PatternManager {
 }
 
 const main = async () => {
+	const animationEmitter = new AnimationEmitter();
 	const images = document.querySelectorAll(".image_wrapper");
 	const outros = [];
 	for (let i = 0; i < images.length; i++) {
 		const target = images[i];
-		const intro = new IntroAnimation(target);
+		const intro = new IntroAnimation(target, animationEmitter);
 		// outros.push(new OutroAnimation(target));
 		intro.play();
 	}
 
-	const patterns = await (
-		await fetch("/combinations.json", {
-			method: "GET",
-		})
-	).json();
+	// ? An example of a pattern file being loaded and registered with the pattern manager
+	// const patterns = await (
+	// 	await fetch("/combinations.json", {
+	// 		method: "GET",
+	// 	})
+	// ).json();
+	// for (const pattern of patterns) {
+	// patternManager.registerPattern(pattern);
+	// }
 
 	const patternManager = new PatternManager();
 	patternManager.registerPattern({ 123: "/test.html" });
@@ -198,9 +215,10 @@ const main = async () => {
 		patternManager.registerNode(target);
 	}
 
-	// for (const pattern of patterns) {
-	// patternManager.registerPattern(pattern);
-	// }
+	// an example of the animation emitter doing something every time a kite finishes animating
+	animationEmitter.addEventListener("animation", (e) => {
+		console.log(e.detail);
+	});
 };
 
 window.addEventListener("load", main);
